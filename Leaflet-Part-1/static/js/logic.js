@@ -15,20 +15,30 @@ const baseMaps = {
     Satellite: satelliteLayer,
     Street: streetLayer
 };
-
 let myMap = L.map("map", {
     center: [0, 0],
     zoom: 2,
     layers: [satelliteLayer]
 });
 
+// Set maxBounds after map is created
+myMap.setMaxBounds([[ -90, -180], [90, 180 ]]);
+
+// Event listener to restrict zooming out beyond the world bounds
+myMap.on('zoomend', function() {
+    if (myMap.getZoom() < 2) {
+        myMap.setZoom(2);
+    }
+});
 // Function to determine color based on earthquake depth
 function getColor(eq_depth) {
-    return eq_depth > 70 ? '#75272C' :
-           eq_depth > 50 ? '#C20612' :
-           eq_depth > 30 ? '#F50717' :
-           eq_depth > 10 ? '#F7515C' :
-           '#F7C3C4';
+    const gradientColors = ['#D4B9DA', '#C994C7', '#DF65B0', '#DD1C77', '#980043'];
+
+    return eq_depth > 90 ? gradientColors[4] :
+           eq_depth > 70 ? gradientColors[3] :
+           eq_depth > 50 ? gradientColors[2] :
+           eq_depth > 30 ? gradientColors[1] :
+           gradientColors[0];
 }
 
 // Fetch earthquake data and plot circles on the map
